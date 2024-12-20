@@ -44,5 +44,36 @@ app.get('/api/admin/grocery', (req, res) => {
     });
 });
 
+app.delete('/api/admin/grocery/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = 'DELETE FROM groceries WHERE id = ?';
+    db.query(sql, [id], (err, result) => {
+        if (err) return res.status(500).json({ success: false, message: err.message });
+        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: 'Item not found' });
+        res.json({ success: true, message: 'Grocery item deleted successfully' });
+    });
+});
 
+
+app.put('/api/admin/grocery/:id', (req, res) => {
+    const { id } = req.params;
+    const { name, price, description, category, inventory } = req.body;
+    const sql = 'UPDATE groceries SET name = ?, price = ?, description = ?, category = ?, inventory = ? WHERE id = ?';
+    db.query(sql, [name, price, description, category, inventory, id], (err, result) => {
+        if (err) return res.status(500).json({ success: false, message: err.message });
+        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: 'Item not found' });
+        res.json({ success: true, message: 'Grocery item updated successfully' });
+    });
+});
+
+app.patch('/api/admin/grocery/:id/inventory', (req, res) => {
+    const { id } = req.params;
+    const { inventory } = req.body;
+    const sql = 'UPDATE groceries SET inventory = ? WHERE id = ?';
+    db.query(sql, [inventory, id], (err, result) => {
+        if (err) return res.status(500).json({ success: false, message: err.message });
+        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: 'Item not found' });
+        res.json({ success: true, message: 'Inventory updated successfully' });
+    });
+});
 
